@@ -105,6 +105,6 @@ impl PomodoroTimer {
     }
 
     fn theme(&self) -> Theme {
-        Theme::CatppuccinMocha
+        Theme::Dracula
     }
 }
