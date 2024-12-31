@@ -1,5 +1,6 @@
 use iced::widget::{button, column, container, row, text};
 use iced::{alignment, Alignment, Element, Length, Task, Theme};
+use std::time::Instant;
 
 pub fn main() -> iced::Result {
     iced::application(PomodoroTimer::title, PomodoroTimer::update, PomodoroTimer::view)
@@ -12,6 +13,7 @@ struct PomodoroTimer {
     seconds_left: i32,
     is_running: bool,
     is_work: bool,
+    last_tick: Option<Instant>,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -29,6 +31,7 @@ impl PomodoroTimer {
                 seconds_left: 25 * 60, // 25 minutes for work session
                 is_running: false,
                 is_work: true,
+                last_tick: None,
             },
             Task::none(),
         )
@@ -41,8 +44,22 @@ impl PomodoroTimer {
     fn update(&mut self, message: Message) -> Task<Message> {
         match message {
             Message::Tick => {
-                if self.is_running && self.seconds_left > 0 {
-                    self.seconds_left -= 1;
+                if self.is_running {
+                    let now = Instant::now();
+                    
+                    if let Some(last_tick) = self.last_tick {
+                        let duration = now.duration_since(last_tick);
+                        //println!("Time since last tick: {:?}", duration);
+                        
+                        if duration.as_secs() >= 1 && self.seconds_left > 0 {
+                            self.seconds_left -= 1;
+                            self.last_tick = Some(now);
+                            //println!("Timer decremented. Seconds left: {}", self.seconds_left);
+                        }
+                    } else {
+                        self.last_tick = Some(now);
+                        //println!("First tick initialized");
+                    }
                 }
             }
             Message::ToggleTimer => {
