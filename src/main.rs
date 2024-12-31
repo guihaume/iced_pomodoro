@@ -89,16 +89,22 @@ impl PomodoroTimer {
         let controls = row![
             button(timer_button_text).on_press(Message::ToggleTimer),
             button("Reset").on_press(Message::Reset),
-            button("Switch Mode").on_press(Message::SwitchMode),
+            ]
+            .spacing(10)
+            .align_y(Alignment::Center);
+
+        let buttons = column![
+            controls,
+            button("Switch Mode").on_press(Message::SwitchMode).style(button::secondary),
         ]
         .spacing(10)
-        .align_y(Alignment::Center);
+        .align_x(Alignment::Center);
 
         container(
             column![
                 text(mode_text).size(40),
                 text(time_text).size(60),
-                controls
+                buttons
             ]
             .spacing(20)
             .align_x(Alignment::Center),
