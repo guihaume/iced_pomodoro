@@ -77,6 +77,11 @@ impl PomodoroTimer {
                             self.seconds_left -= 1;
                             self.last_tick = Some(now);
                         }
+                        else if self.seconds_left == 0 {
+                            self.is_work = !self.is_work;
+                            self.seconds_left = if self.is_work { 25 * 60 } else { 5 * 60 };
+                            self.is_running = false; 
+                        }
                     } else {
                         self.last_tick = Some(now);
                     }
