@@ -1,7 +1,8 @@
 // Import necessary modules and components from the iced crate
-use iced::widget::{button, column, container, row, text};
-use iced::{alignment, Alignment, Element, Length, Task, Theme};
+use iced::widget::{container, button, column, row, text};
+use iced::{Alignment, Element, Length, Task, Theme};
 use std::time::Instant;
+use open;
 
 // Main function to run the Pomodoro Timer application
 pub fn main() -> iced::Result {
@@ -26,6 +27,13 @@ enum Message {
     ToggleTimer,   // Message to toggle the timer on/off
     Reset,         // Message to reset the timer
     SwitchMode,    // Message to switch between work and break modes
+    LinkPressed(Link), // Message to open a link
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum Link {
+    Rust,
+    Iced,
 }
 
 // Implementation of the PomodoroTimer struct
@@ -86,6 +94,12 @@ impl PomodoroTimer {
                 self.seconds_left = if self.is_work { 25 * 60 } else { 5 * 60 };
                 self.is_running = false;
             }
+            Message::LinkPressed(link) => {
+                let _ = open::that_in_background(match link {
+                    Link::Rust => "https://rust-lang.org",
+                    Link::Iced => "https://iced.rs",
+                });
+            }
         }
         Task::none()
     }
@@ -99,37 +113,61 @@ impl PomodoroTimer {
         let mode_text = if self.is_work { "Work Time" } else { "Break Time" };
         let timer_button_text = if self.is_running { "Pause" } else { "Start" };
 
-        let controls = row![
-            button(timer_button_text).on_press(Message::ToggleTimer),
-            button("Reset").on_press(Message::Reset),
+        let controls = column![
+            button(timer_button_text).on_press(Message::ToggleTimer).width(300),
+            button("Reset").on_press(Message::Reset).width(300),
         ]
         .spacing(10)
-        .align_y(Alignment::Center);
+        .align_x(Alignment::Center);
 
 
         let buttons = column![
             controls,
-            button("Switch Mode").on_press(Message::SwitchMode).style(button::success).width(Length::Fill),
+            button("Switch Mode").on_press(Message::SwitchMode).style(button::success).width(300),
         ]
         .spacing(20)
         .align_x(Alignment::Center);
 
+        let footer = {
+            let text = |content| text(content).font(iced::Font::MONOSPACE).size(12);
+
+            let rust = button(text("🦀 Rust").shaping(text::Shaping::Advanced)).style(button::text).on_press(Message::LinkPressed(Link::Rust));
+
+            let iced = button(text("🧊 Iced").shaping(text::Shaping::Advanced)).style(button::text).on_press(Message::LinkPressed(Link::Iced));
+
+            row![
+                text("Made with"),
+                rust,
+                text("and"),
+                iced,
+            ]
+            .spacing(5)
+            .align_y(Alignment::Center)
+            .padding(10)
+        };
+
+        let timer =  container(column![
+            text(mode_text).size(40),
+            text(time_text).size(60),
+            buttons,
+        ]
+        .spacing(20)
+        .align_x(Alignment::Center)
+        )
+        .align_y(Alignment::Center)
+        .align_x(Alignment::Center)
+        .width(Length::Fill)
+        .height(Length::Fill);
+
 
         container(
             column![
-                text(mode_text).size(40),
-                text(time_text).size(60),
-                buttons
+                timer,
+                footer,
             ]
-            .spacing(20)
-            .align_x(Alignment::Center)
-            .width(200)
-            .height(300)
         )
         .width(Length::Fill)
         .height(Length::Fill)
-        .align_x(alignment::Horizontal::Center)
-        .align_y(alignment::Vertical::Center)
         .into()
     }
 
@@ -153,4 +191,5 @@ impl PomodoroTimer {
     fn theme(&self) -> Theme {
         Theme::TokyoNightStorm
     }
+
 }
