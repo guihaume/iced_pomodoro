@@ -58,7 +58,7 @@ impl PomodoroTimer {
 
     // Function to return the title of the Pomodoro Timer application
     fn title(&self) -> String {
-        String::from("🧊🍅 - Pomodoro Timer - 🍅🧊")
+        String::from("Iced Tomato")
     }
 
 
@@ -116,11 +116,12 @@ impl PomodoroTimer {
         let seconds = self.seconds_left % 60;
         let time_text = format!("{:02}:{:02}", minutes, seconds);
         let mode_text = if self.is_work { "Work Time" } else { "Break Time" };
-        let timer_button_text = if self.is_running { "Pause" } else { "Start" };
+        let timer_button_text = if self.is_running { "⏸ Pause" } else { "▶ Start" };
+        let switch_button_text = if self.is_work { "Have a break, have a..." } else { "Let's work hard" };
 
         let controls = column![
-            button(timer_button_text).on_press(Message::ToggleTimer).width(300),
-            button("Reset").on_press(Message::Reset).width(300),
+            button(text(timer_button_text).shaping(text::Shaping::Advanced).align_x(Alignment::Center)).on_press(Message::ToggleTimer).width(300),
+            button(text("🔄️ Reset").shaping(text::Shaping::Advanced).align_x(Alignment::Center)).on_press(Message::Reset).width(300),
         ]
         .spacing(10)
         .align_x(Alignment::Center);
@@ -128,7 +129,7 @@ impl PomodoroTimer {
 
         let buttons = column![
             controls,
-            button("Switch Mode").on_press(Message::SwitchMode).style(button::success).width(300),
+            button(text(switch_button_text).align_x(Alignment::Center)).on_press(Message::SwitchMode).style(button::success).width(300),
         ]
         .spacing(20)
         .align_x(Alignment::Center);
@@ -146,9 +147,8 @@ impl PomodoroTimer {
                 text("and"),
                 iced,
             ]
-            .spacing(5)
             .align_y(Alignment::Center)
-            .padding(10)
+            .padding([0, 10])
         };
 
         let timer =  container(column![
@@ -194,7 +194,7 @@ impl PomodoroTimer {
 
 
     fn theme(&self) -> Theme {
-        Theme::TokyoNightStorm
+        Theme::Dracula
     }
 
 }
