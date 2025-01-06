@@ -1,11 +1,11 @@
-# ❄️ Iced Pomodoro
+# 🧊 Iced Pomodoro
 
 A minimal and efficient Pomodoro timer built with Rust and the Iced framework.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Rust Version](https://img.shields.io/badge/rust-stable-brightgreen.svg)
 
-
+![MacOS capture](images/macos_capture.png)
 
 ## 🎯 Features
 
