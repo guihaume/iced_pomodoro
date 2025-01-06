@@ -19,7 +19,7 @@ Make sure you have Rust installed on your system. You can install it from [rust-
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/iced-pomodoro
+git clone https://github.com/guihaume/iced_pomodoro
 cd iced_pomodoro
 
 # Build and run the application
